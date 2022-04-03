@@ -71,7 +71,7 @@ $roles = Rol::read_roles();
                                     <td><?php echo $usuario->get_username(); ?></td>
                                     <td><?php echo $usuario->nombre_rol; ?></td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-dark">Modificar</a>
+                                        <a href="#" class="btn btn-sm btn-dark" data-toggle="modal" data-target="#modal_update_usuario">Modificar</a>
                                         <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
                                         <a href="#" class="btn btn-sm btn-warning">Baja</a>
                                     </td>
@@ -82,7 +82,8 @@ $roles = Rol::read_roles();
                 </div>
             </div>
         </div>
-
+        
+        <!--Modal con formulario de alta de usuario -->
         <div class="modal fade" id="modal_create_usuario">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -96,17 +97,17 @@ $roles = Rol::read_roles();
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="nombre">Nombre:</label>
-                                        <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre del usuario" required min="10">
+                                        <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre del usuario">
                                         <span class="invalid_message" hidden>*Ingrese el nombre</span>
                                     </div>
                                     <div class="form-group">
                                         <label for="email">E-mail:</label>
-                                        <input class="form-control" type="email" name="email" id="email" placeholder="Ingrese el e-mail del usuario" required>
+                                        <input class="form-control" type="email" name="email" id="email" placeholder="Ingrese el e-mail del usuario">
                                         <span class="invalid_message" hidden>*Ingrese el email</span>
                                     </div>
                                     <div class="form-group">
                                         <label for="username">Username</label>
-                                        <input class="form-control" type="text" name="username" id="username" required min="3" max="12">
+                                        <input class="form-control" type="text" name="username" id="username">
                                         <span class="invalid_message" hidden>*Ingrese el username</span>
                                     </div>
                                 </div>
@@ -114,12 +115,12 @@ $roles = Rol::read_roles();
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="user_password">Contraseña:</label>
-                                        <input class="form-control" type="password" name="user_password" id="user_password" required min="6">
+                                        <input class="form-control" type="password" name="user_password" id="user_password" required>
                                         <span class="invalid_message" hidden>*Ingrese la contraseña</span>
                                     </div>
                                     <div class="form-group">
                                         <label for="user_password_confirm">Confirmar Contraseña:</label>
-                                        <input class="form-control" type="password" name="user_password_confirm" id="user_password_confirm" required min="6">
+                                        <input class="form-control" type="password" name="user_password_confirm" id="user_password_confirm">
                                         <span class="invalid_message" hidden>*Confirme la contraseña</span>
                                     </div>
                                     <div class="form-group">
@@ -143,10 +144,61 @@ $roles = Rol::read_roles();
                 </div>
             </div>
         </div>
+        
+        <!-- Modal de modificación de usuario -->
+        <div class="modal fade" id="modal_update_usuario">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modificar Uusuario</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <form action="">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="n_nombre">Nombre:</label>
+                                <input type="text" name="n_nombre" id="n_nombre" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-success" value="Aceptar" id="update_user_submit">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </form>
+                </div>   
+            </div>
+        </div>
 
     </section>
 </body>
 
 <script>
+    let submit = document.querySelector('#create_user_submit');
+
+    submit.addEventListener('click', function(){
+        let n_usuario = {
+            nombre : document.querySelector('#nombre').value,
+            email : document.querySelector('#email').value,
+            username : document.querySelector('#username').value,
+            user_password : document.querySelector('#user_password').value,
+            user_password_confirm : document.querySelector('#user_password_confirm').value
+        };
+
+        if (n_usuario.nombre === undefined || n_usuario.nombre === "") {
+            
+        }
+        if (n_usuario.email === undefined || n_usuario.email === "") {
+            
+        }
+        if (n_usuario.username === undefined || n_usuario.username === "") {
+            
+        }
+        if (n_usuario.user_password === undefined || n_usuario.user_password === "") {
+            
+        }
+        if (n_usuario.user_password_confirm === undefined || n_usuario.user_password_confirm === "") {
+            
+        }
+    });
 </script>
 </html>
