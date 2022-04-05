@@ -74,13 +74,58 @@ $roles = Rol::read_roles();
                                     <td><?php echo $usuario->get_username(); ?></td>
                                     <td><?php echo $usuario->nombre_rol; ?></td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modal_update_usuario" data-id-user="<?php echo $usuario->get_id_user(); ?>" id="update_user_<?php echo $usuario->get_id_user(); ?>" onclick="return update_user(<?php echo $usuario->get_id_user(); ?>)">Modificar</a>
+                                        <a href="#modal_update_usuario_<?php echo $usuario->get_id_user(); ?>" class="btn btn-sm btn-info" data-toggle="modal" id="update_user_<?php echo $usuario->get_id_user(); ?>">Modificar</a>
                                         
                                         <a href="#modal_delete_usuario_<?php echo $usuario->get_id_user(); ?>" class="btn btn-sm btn-danger" data-toggle="modal">Eliminar</a>
                                         
                                         <a href="#" class="btn btn-sm btn-warning">Baja</a>
                                     </td>
                                 </tr>
+                                <!-- Modal de modificación de usuario -->
+                                <div class="modal fade" id="modal_update_usuario_<?php echo $usuario->get_id_user(); ?>">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Modificar Uusuario</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <form id="update_user_<?php echo $usuario->get_id_user(); ?>_form" action="" onsubmit="return validar_formulario_update()">
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="n_nombre">Nombre:</label>
+                                                        <input type="text" name="Nombre" id="n_nombre_<?php echo $usuario->get_id_user(); ?>" class="form-control" value="<?php echo $usuario->get_nombre(); ?>">
+                                                        <span class="invalid-message" hidden></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="n_email">Email:</label>
+                                                        <input type="text" name="Email" id="n_email_<?php echo $usuario->get_id_user(); ?>" class="form-control" value="<?php echo $usuario->get_email(); ?>">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="n_username">Username:</label>
+                                                        <input type="text" name="Username" id="n_username_<?php echo $usuario->get_id_user(); ?>" class="form-control" value="<?php echo $usuario->get_username(); ?>">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="n_roles">Asignar un rol:</label>
+                                                        <select class="form-control" name="Roles" id="n_roles_<?php echo $usuario->get_id_user(); ?>">
+                                                            <option value="0" disabled>Seleccione un rol...</option>
+                                                            <?php foreach ($roles as $rol) { ?>
+                                                                <?php if ($rol->get_nombre_rol() == $usuario->nombre_rol) { ?>
+                                                                    <option selected value="<?php echo $rol->get_rol_id()?>"><?php echo $rol->get_nombre_rol()?></option>
+                                                                <?php } else { ?>
+                                                                <option value="<?php echo $rol->get_rol_id()?>"><?php echo $rol->get_nombre_rol()?></option>
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <input type="submit" class="btn btn-success" value="Aceptar" id="update_user_<?php echo $usuario->get_id_user(); ?>_submit">
+                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                                                </div>
+                                            </form>
+                                        </div>   
+                                    </div>
+                                </div>
                                 <!-- Modal alerta de eliminación de usuario -->
                                 <div class="modal fade" id="modal_delete_usuario_<?php echo $usuario->get_id_user(); ?>">
                                     <div class="modal-dialog">
@@ -169,52 +214,7 @@ $roles = Rol::read_roles();
                     </form>
                 </div>
             </div>
-        </div>
-        
-        <!-- Modal de modificación de usuario -->
-        <div class="modal fade" id="modal_update_usuario">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Modificar Uusuario</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <form id="update_user_form" action="" onsubmit="return validar_formulario_update()">
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="n_nombre">Nombre:</label>
-                                <input type="text" name="Nombre" id="n_nombre" class="form-control" value="">
-                                <span class="invalid-message" hidden></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="n_email">Email:</label>
-                                <input type="text" name="Email" id="n_email" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="n_username">Username:</label>
-                                <input type="text" name="Username" id="n_username" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="n_roles">Asignar un rol:</label>
-                                <select class="form-control" name="Roles" id="n_roles">
-                                    <option value="0" disabled>Seleccione un rol...</option>
-                                    <?php foreach ($roles as $rol) { ?>
-                                        <option value="<?php echo $rol->get_rol_id()?>"><?php echo $rol->get_nombre_rol()?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="submit" class="btn btn-success" value="Aceptar" id="update_user_submit">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        </div>
-                    </form>
-                </div>   
-            </div>
-        </div>
-
-        
-
+        </div>    
     </section>
 </body>
 
