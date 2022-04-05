@@ -5,6 +5,9 @@ include 'roles.php';
 //READ
 $usuarios = Usuario::read_users();
 $roles = Rol::read_roles();
+
+//$usuario = new Usuario();
+
 ?>
 
 <!DOCTYPE html>
@@ -71,11 +74,34 @@ $roles = Rol::read_roles();
                                     <td><?php echo $usuario->get_username(); ?></td>
                                     <td><?php echo $usuario->nombre_rol; ?></td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-dark" data-toggle="modal" data-target="#modal_update_usuario">Modificar</a>
-                                        <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                                        <a href="#" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modal_update_usuario" data-id-user="<?php echo $usuario->get_id_user(); ?>" id="update_user_<?php echo $usuario->get_id_user(); ?>" onclick="return update_user(<?php echo $usuario->get_id_user(); ?>)">Modificar</a>
+                                        
+                                        <a href="#modal_delete_usuario_<?php echo $usuario->get_id_user(); ?>" class="btn btn-sm btn-danger" data-toggle="modal">Eliminar</a>
+                                        
                                         <a href="#" class="btn btn-sm btn-warning">Baja</a>
                                     </td>
                                 </tr>
+                                <!-- Modal alerta de eliminación de usuario -->
+                                <div class="modal fade" id="modal_delete_usuario_<?php echo $usuario->get_id_user(); ?>">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Eliminar Usuario</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            
+                                            <div class="modal-body">
+                                                <p>El usuario: <strong><?php echo $usuario->get_nombre() ?></strong> está por ser eliminado. ¿Seguro de que quiere continuar?</p>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <a href="usuarios.php/delete_user/<?php echo $usuario->get_id_user();?>" class="btn btn-success">Continuar</a>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
                             <?php } ?>
                         </tbody>
                     </table>
@@ -91,47 +117,47 @@ $roles = Rol::read_roles();
                         <h4 class="modal-title">Crear nuevo Usuario</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                    <form action="">
+                    <form id="create_user_form" action="" onsubmit="return validar_formulario_create()">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="nombre">Nombre:</label>
                                         <input class="form-control" type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre del usuario">
-                                        <span class="invalid_message" hidden>*Ingrese el nombre</span>
+                                        <span class="invalid-message" id="invalid_name" hidden></span>
                                     </div>
                                     <div class="form-group">
                                         <label for="email">E-mail:</label>
                                         <input class="form-control" type="email" name="email" id="email" placeholder="Ingrese el e-mail del usuario">
-                                        <span class="invalid_message" hidden>*Ingrese el email</span>
+                                        <span class="invalid-message" id="invalid_email" hidden>*Ingrese el email</span>
                                     </div>
                                     <div class="form-group">
-                                        <label for="username">Username</label>
+                                        <label for="username">Username <span class="small">(Mayor a 3 caracteres)</span>:</label>
                                         <input class="form-control" type="text" name="username" id="username">
-                                        <span class="invalid_message" hidden>*Ingrese el username</span>
+                                        <span class="invalid-message" id="invalid_username" hidden>*Ingrese el username</span>
                                     </div>
                                 </div>
 
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="user_password">Contraseña:</label>
-                                        <input class="form-control" type="password" name="user_password" id="user_password" required>
-                                        <span class="invalid_message" hidden>*Ingrese la contraseña</span>
+                                        <label for="user_password">Contraseña <span class="small">(Entre 6 y 12 caracteres)</span>:</label>
+                                        <input class="form-control" type="password" name="user_password" id="user_password">
+                                        <span class="invalid-message" id="invalid_password" hidden>*Ingrese la contraseña</span>
                                     </div>
                                     <div class="form-group">
                                         <label for="user_password_confirm">Confirmar Contraseña:</label>
                                         <input class="form-control" type="password" name="user_password_confirm" id="user_password_confirm">
-                                        <span class="invalid_message" hidden>*Confirme la contraseña</span>
+                                        <span class="invalid-message" id="invalid_password_conf" hidden>*Confirme la contraseña</span>
                                     </div>
                                     <div class="form-group">
-                                        <label for="rol_id">Asignar un rol:</label>
+                                        <label for="roles">Asignar un rol:</label>
                                         <select class="form-control" name="roles" id="roles">
                                             <option value="0" disabled selected>Seleccione un rol...</option>
                                             <?php foreach ($roles as $rol) { ?>
                                                 <option value="<?php echo $rol->get_rol_id()?>"><?php echo $rol->get_nombre_rol()?></option>
                                             <?php } ?>
                                         </select>
-                                        <span class="invalid_message" hidden>*Seleccione un rol</span>
+                                        <span class="invalid-message" id="invalid_rol" hidden></span>
                                     </div>
                                 </div>
                             </div>     
@@ -153,11 +179,29 @@ $roles = Rol::read_roles();
                         <h4 class="modal-title">Modificar Uusuario</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
-                    <form action="">
+                    <form id="update_user_form" action="" onsubmit="return validar_formulario_update()">
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="n_nombre">Nombre:</label>
-                                <input type="text" name="n_nombre" id="n_nombre" class="form-control">
+                                <input type="text" name="Nombre" id="n_nombre" class="form-control" value="">
+                                <span class="invalid-message" hidden></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="n_email">Email:</label>
+                                <input type="text" name="Email" id="n_email" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="n_username">Username:</label>
+                                <input type="text" name="Username" id="n_username" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="n_roles">Asignar un rol:</label>
+                                <select class="form-control" name="Roles" id="n_roles">
+                                    <option value="0" disabled>Seleccione un rol...</option>
+                                    <?php foreach ($roles as $rol) { ?>
+                                        <option value="<?php echo $rol->get_rol_id()?>"><?php echo $rol->get_nombre_rol()?></option>
+                                    <?php } ?>
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -169,36 +213,124 @@ $roles = Rol::read_roles();
             </div>
         </div>
 
+        
+
     </section>
 </body>
 
 <script>
-    let submit = document.querySelector('#create_user_submit');
+    //Función para validar formulario de alta de usuario
+    function validar_formulario_create(){
+        //Elementos input
+        let input_nombre = document.querySelector('#nombre');
+        let input_email = document.querySelector('#email');
+        let input_username = document.querySelector('#username');
+        let input_password = document.querySelector('#user_password');
+        let input_password_confirm = document.querySelector('#user_password_confirm');
+        let select_roles = document.querySelector('#roles');
 
-    submit.addEventListener('click', function(){
+        //Valores de los inputs
+        let mensaje_nombre = document.querySelector('#invalid_name');
+        let mensaje_email = document.querySelector('#invalid_email');
+        let mensaje_username = document.querySelector('#invalid_username');
+        let mensaje_password = document.querySelector('#invalid_password');
+        let mensaje_password_confirm = document.querySelector('#invalid_password_conf');
+        let mensaje_rol = document.querySelector('#invalid_rol');
+
+        //Expresion regular para verificar e-mail
+        const expresion = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
+
+        //Objeto con los valores de los inputs
         let n_usuario = {
-            nombre : document.querySelector('#nombre').value,
-            email : document.querySelector('#email').value,
-            username : document.querySelector('#username').value,
-            user_password : document.querySelector('#user_password').value,
-            user_password_confirm : document.querySelector('#user_password_confirm').value
+            nombre : input_nombre.value,
+            email : input_email.value,
+            username : input_username.value,
+            user_password : input_password.value,
+            user_password_confirm : input_password_confirm.value,
+            rol : select_roles.value
         };
 
-        if (n_usuario.nombre === undefined || n_usuario.nombre === "") {
-            
+        //Retorna false si el input nombre está vacío o es muy corto
+        if (n_usuario.nombre === undefined || n_usuario.nombre === "" || n_usuario.nombre.length < 6) {
+            input_nombre.classList.add('invalid-input');
+            mensaje_nombre.innerHTML = "*Ingrese un nombre válido";
+            mensaje_nombre.removeAttribute('hidden');
+            input_nombre.focus();
+
+            return false;
+        } else{
+            input_nombre.classList.remove('invalid-input');
+            mensaje_nombre.innerHTML = "";
+            mensaje_nombre.setAttribute('hidden', 'true');
         }
-        if (n_usuario.email === undefined || n_usuario.email === "") {
-            
+
+        //Retorna false si el input e-mail está vacío o no tiene el formato adecuado
+        if (n_usuario.email === undefined || n_usuario.email === "" || !expresion.test(n_usuario.email)) {
+            input_email.classList.add('invalid-input');
+            mensaje_email.innerHTML = "*Ingrese un e-mail del válido";
+            mensaje_email.removeAttribute('hidden');
+            input_email.focus();
+            return false;
+        }else{
+            input_email.classList.remove('invalid-input');
+            mensaje_email.innerHTML = "";
+            mensaje_email.setAttribute('hidden', 'true');
         }
-        if (n_usuario.username === undefined || n_usuario.username === "") {
-            
+
+        //Retorna false si el input username está vacío o es muy corto
+        if (n_usuario.username === undefined || n_usuario.username === "" || n_usuario.username.length < 3) {
+            input_username.classList.add('invalid-input');
+            mensaje_username.innerHTML = "*Ingrese un nombre de usuario válido";
+            mensaje_username.removeAttribute('hidden');
+            input_username.focus();
+            return false;
+        } else{
+            input_username.classList.remove('invalid-input');
+            mensaje_username.innerHTML = "";
+            mensaje_username.setAttribute('hidden', 'false');
         }
-        if (n_usuario.user_password === undefined || n_usuario.user_password === "") {
-            
+
+        //Retorna false si el input password está vacío o no cumple con la cantidad de caracteres
+        if (n_usuario.user_password === undefined || n_usuario.user_password === "" || n_usuario.user_password.length < 6 || n_usuario.user_password.length > 12) {
+            input_password.classList.add('invalid-input');
+            mensaje_password.innerHTML = "*Ingrese una contraseña válida";
+            mensaje_password.removeAttribute('hidden');
+            input_password.focus();
+            return false;
         }
-        if (n_usuario.user_password_confirm === undefined || n_usuario.user_password_confirm === "") {
-            
+
+        //Retorna false si el input password está vacío o no cumple con la cantidad de caracteres
+        if (n_usuario.user_password_confirm !== n_usuario.user_password) {
+            input_password_confirm.classList.add('invalid-input');
+            mensaje_password_confirm.innerHTML = "*Las contraseñas no coinciden";
+            mensaje_password_confirm.removeAttribute('hidden');
+            input_password_confirm.focus();
+            return false;
+        } else{
+            input_password_confirm.classList.remove('invalid-input');
+            mensaje_password_confirm.innerHTML = "";
+            mensaje_password_confirm.setAttribute('hidden', 'true');
         }
-    });
+
+        //Retorna false si el select de roles está vacío
+        if (n_usuario.rol == 0) {
+            select_roles.classList.add('invalid-input');
+            mensaje_rol.innerHTML = "*Seleccione un rol";
+            mensaje_rol.removeAttribute('hidden');
+            select_roles.focus();
+            return false;
+        }
+    }
+
+    function borrar_usuario(){
+        let usuarios = [];
+        
+        <?php foreach ($usuarios as $usuario) { ?>
+            usuarios.push(<?php $usuario; ?>);
+        <?php } ?>
+
+        console.log(usuarios);
+    }
 </script>
+
 </html>

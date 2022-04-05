@@ -13,8 +13,6 @@
 
     
     //UPDATE
-    //$email = "juan.perez@gmail.com";
-    //$n_nombre = "Juan Ignacio Perez";
     //$usuario pasa a ser una instancia de la clase Usuario     mediante el método estático getByEmail()
     //$usuario = Usuario::getByID(3);
     //$usuario->set_nombre($n_nombre);

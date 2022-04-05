@@ -115,11 +115,11 @@ class Usuario extends Conexion{
     }
 
     //Delete
-    public function delete_user(){
+    public function delete_user($id){
         $this->conectar();
 
         $pre = mysqli_prepare($this->con, "DELETE * FROM usuarios WHERE id_user = ?");
-        $pre->bind_param("i", $this->id_user);
+        $pre->bind_param("i", $id);
         $pre->execute();
     }
 
